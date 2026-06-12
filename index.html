@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本面板採購小工具｜神保 NK × So-Style</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --ink:#2b2b2b; --sub:#8a877f;
+    --line:#e8e6e0; --accent:#2b2b2b; --hl:#f3efe2; --warn:#b4540a; --ok:#3a6b35;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif; background:var(--bg); color:var(--ink); line-height:1.6;}
+  .wrap{max-width:860px; margin:0 auto; padding:20px 16px 80px;}
+  header{text-align:center; padding:28px 0 8px;}
+  header h1{font-size:1.45rem; margin:0 0 6px; letter-spacing:.06em;}
+  header p{margin:0; color:var(--sub); font-size:.85rem;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; margin-top:16px;}
+  .step{display:flex; align-items:center; gap:8px; font-weight:700; margin-bottom:14px; font-size:1.02rem;}
+  .step .n{background:var(--ink); color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; flex:none;}
+  .seg{display:flex; gap:8px; flex-wrap:wrap;}
+  .seg button{flex:1 1 120px; padding:12px 10px; border-radius:12px; border:1.5px solid var(--line); background:#fff; font-size:.95rem; cursor:pointer; font-family:inherit; color:var(--ink);}
+  .seg button.on{border-color:var(--ink); background:var(--ink); color:#fff; font-weight:700;}
+  .seg button small{display:block; font-size:.72rem; opacity:.75; font-weight:400;}
+  .swatches{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+  .sw{flex:1 1 100px; border:1.5px solid var(--line); border-radius:12px; padding:10px; text-align:center; cursor:pointer; background:#fff;}
+  .sw.on{border-color:var(--ink); box-shadow:0 0 0 1.5px var(--ink) inset;}
+  .sw .chip{width:100%; height:42px; border-radius:8px; border:1px solid rgba(0,0,0,.12); margin-bottom:6px;}
+  .sw span{font-size:.82rem;}
+  .opt-row{margin-top:14px; padding:12px; background:var(--hl); border-radius:12px; font-size:.88rem;}
+  .opt-row label{margin-right:14px; cursor:pointer; display:inline-block;}
+  .note{font-size:.78rem; color:var(--sub); margin-top:6px;}
+  .warnnote{font-size:.8rem; color:var(--warn); margin-top:6px;}
+  .alert{margin:14px 0 4px; padding:14px; border:1.5px solid #e8c9a8; background:#fdf3e7; border-radius:12px; font-size:.85rem; line-height:1.7;}
+  .alert b.t{display:block; color:var(--warn); margin-bottom:4px;}
+  .grp{margin-top:18px;}
+  .grp h3{font-size:.85rem; color:var(--sub); margin:0 0 8px; letter-spacing:.12em;}
+  .item{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px dashed var(--line); gap:10px;}
+  .item:last-child{border-bottom:none;}
+  .item img.th{width:48px; height:48px; object-fit:contain; border:1px solid var(--line); border-radius:10px; background:#fff; flex:none;}
+  .item .lb{font-size:.95rem; flex:1;}
+  td img.bth{width:42px; height:42px; object-fit:contain; border:1px solid var(--line); border-radius:8px; background:#fff; display:block;}
+  .item .lb small{display:block; color:var(--sub); font-size:.75rem;}
+  .qty{display:flex; align-items:center; gap:0; flex:none;}
+  .qty button{width:36px; height:36px; border:1.5px solid var(--line); background:#fff; font-size:1.1rem; cursor:pointer; color:var(--ink);}
+  .qty button:first-child{border-radius:10px 0 0 10px;}
+  .qty button:last-child{border-radius:0 10px 10px 0;}
+  .qty input{width:46px; height:36px; border:1.5px solid var(--line); border-left:none; border-right:none; text-align:center; font-size:1rem; -moz-appearance:textfield;}
+  .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;}
+  .gen{display:block; width:100%; margin-top:20px; padding:16px; border:none; border-radius:14px; background:var(--ink); color:#fff; font-size:1.05rem; font-weight:700; cursor:pointer; letter-spacing:.15em; font-family:inherit;}
+  table{width:100%; border-collapse:collapse; font-size:.85rem; margin-top:10px;}
+  th{font-size:.72rem; color:var(--sub); text-align:left; padding:6px 6px; border-bottom:1.5px solid var(--ink); letter-spacing:.08em; white-space:nowrap;}
+  td{padding:9px 6px; border-bottom:1px solid var(--line); vertical-align:top;}
+  td.num,th.num{text-align:right; white-space:nowrap;}
+  .sku{font-weight:700; white-space:nowrap;}
+  .use{color:var(--sub); font-size:.78rem;}
+  .na{color:var(--warn); font-size:.78rem;}
+  a.buy{display:inline-block; padding:4px 10px; border-radius:8px; background:var(--ink); color:#fff; text-decoration:none; font-size:.75rem; white-space:nowrap;}
+  a.srh{display:inline-block; padding:4px 10px; border-radius:8px; border:1px solid var(--warn); color:var(--warn); text-decoration:none; font-size:.75rem; white-space:nowrap;}
+  .total{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding:14px; background:var(--hl); border-radius:12px; font-weight:700;}
+  .total .y{font-size:1.3rem;}
+  .actions{display:flex; gap:10px; margin-top:12px;}
+  .actions button{flex:1; padding:12px; border-radius:12px; border:1.5px solid var(--ink); background:#fff; cursor:pointer; font-size:.9rem; font-family:inherit; color:var(--ink);}
+  .remarks{margin-top:14px; font-size:.78rem; color:var(--sub);}
+  .remarks li{margin-bottom:4px;}
+  footer{text-align:center; font-size:.72rem; color:var(--sub); margin-top:28px; line-height:1.8;}
+  .hide{display:none;}
+  @media print{ .noprint{display:none;} body{background:#fff;} .card{border:none; padding:8px 0;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>日本面板採購小工具</h1>
+  <p>神保 NK ／ Panasonic So-Style × 田中電機<br>填入家裡需要的開關插座數量，自動換算採購型號清單</p>
+</header>
+
+<!-- STEP 1 -->
+<div class="card noprint">
+  <div class="step"><span class="n">1</span>選擇品牌與顏色</div>
+  <div class="seg" id="brandSeg">
+    <button data-b="nk" class="on">神保 NK<small>JIMBO NK SERIES</small></button>
+    <button data-b="ss">So-Style<small>Panasonic SO-STYLE</small></button>
+  </div>
+  <div class="swatches" id="colorSw"></div>
+
+  <div class="opt-row" id="ssOpts">
+    <div><b>開關按鍵樣式：</b>
+      <label><input type="radio" name="ssStyle" value="sq" checked> 方形按鍵</label>
+      <label><input type="radio" name="ssStyle" value="wide"> 橫長大按鍵</label>
+    </div>
+    <div style="margin-top:6px;"><label><input type="checkbox" id="ssInd"> 開關改用「有指示燈」款（夜間找開關方便）</label></div>
+    <div class="note">橫長大按鍵適用一切／二切（四切＝二切×2、五切＝二切+方形×3）；三切、六切自動使用方形按鍵。</div>
+  </div>
+  <div class="opt-row hide" id="nkOpts">
+    <div class="note" style="color:var(--ink);"><b>NK 指示燈款說明：</b>田中電機目前未上架 NK 有指示燈開關（NKW01009 等），本工具以無指示燈款計算；需要指示燈款請參考神保官方型錄另洽通路。</div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="card noprint">
+  <div class="step"><span class="n">2</span>填入需要的數量（以「面板位置」為單位）</div>
+
+  <div class="grp"><h3>開關（牆上一塊面板算 1 組）</h3>
+    <div class="item"><div class="lb">一切開關<small>1 顆按鍵控 1 盞燈．「一鍵關 one touch」也是買這個</small></div><div class="qty" data-k="sw1"></div></div>
+    <div class="item"><div class="lb">二切開關<small>同一面板 2 顆按鍵</small></div><div class="qty" data-k="sw2"></div></div>
+    <div class="item"><div class="lb">三切開關<small>同一面板 3 顆按鍵</small></div><div class="qty" data-k="sw3"></div></div>
+    <div class="item"><div class="lb">四切開關<small>同一面板 4 顆按鍵（2+2）</small></div><div class="qty" data-k="sw4"></div></div>
+    <div class="item"><div class="lb">五切開關<small>同一面板 5 顆按鍵（2+3）</small></div><div class="qty" data-k="sw5"></div></div>
+    <div class="item"><div class="lb">六切開關<small>同一面板 6 顆按鍵（3+3）</small></div><div class="qty" data-k="sw6"></div></div>
+  </div>
+
+  <div class="alert">
+    <b class="t">⚡ 下單前必看：哪些插座「不能」用日本面板？</b>
+    本工具的插座都是日規 <b>110V 一般迴路</b>用，本體端子只能接 <b>1.6／2.0mm 單芯線</b>。<br>
+    台灣的<b>專用迴路</b>（冷氣、電熱水器、烤箱、廚房高功率家電等）常用 <b>5.5mm²／8mm² 絞線</b>，<b>無法直接接上日規插座</b>，220V 插座也一樣（日本沒有對應台灣的款式）。<br>
+    👉 請先跟水電師傅確認家裡哪幾個位置是專迴：<b>專迴位置不要算進這個工具</b>，保留台規插座，或由水電評估盒內轉接後再決定。
+  </div>
+  <div class="grp"><h3>插座（110V 一般迴路）</h3>
+    <div class="item"><div class="lb">一般雙插（接地插座）<small>最常見的 2 孔插座</small></div><div class="qty" data-k="out2"></div></div>
+    <div class="item"><div class="lb">踢腳扁型插座．1 口<small>裝在踢腳板的扁插座</small></div><div class="qty" data-k="kick1"></div></div>
+    <div class="item"><div class="lb">踢腳扁型插座．2 口</div><div class="qty" data-k="kick2"></div></div>
+    <div class="item"><div class="lb">踢腳扁型插座．3 口</div><div class="qty" data-k="kick3"></div></div>
+    <div class="item"><div class="lb">USB 充電插座<small>給手機充電用，請見清單備註</small></div><div class="qty" data-k="usb"></div></div>
+  </div>
+
+  <div class="grp"><h3>弱電（網路／電話／電視）</h3>
+    <div class="item"><div class="lb">網路孔 Cat6</div><div class="qty" data-k="lan6"></div></div>
+    <div class="item" data-nk-only><div class="lb">網路孔 Cat6A<small>10G 高速網路用（NK）</small></div><div class="qty" data-k="lan6a"></div></div>
+    <div class="item"><div class="lb">電話孔<small>NK：6極4芯／So-Style：6極2芯</small></div><div class="qty" data-k="tel"></div></div>
+    <div class="item" data-nk-only><div class="lb">電話孔 Cat6 8極8芯（NK）</div><div class="qty" data-k="tel8"></div></div>
+    <div class="item"><div class="lb">電視端子</div><div class="qty" data-k="tv"></div></div>
+  </div>
+
+  <div class="grp"><h3>其他</h3>
+    <div class="item"><div class="lb">盲蓋．一連<small>封住不用的出線孔</small></div><div class="qty" data-k="blind1"></div></div>
+    <div class="item"><div class="lb">盲蓋．二連</div><div class="qty" data-k="blind2"></div></div>
+  </div>
+
+  <button class="gen" id="genBtn">產 生 採 購 清 單</button>
+</div>
+
+<!-- RESULT -->
+<div class="card hide" id="result">
+  <div class="step"><span class="n">3</span>採購清單 <span id="resBrand" style="font-weight:400;color:var(--sub);font-size:.85rem;"></span></div>
+  <div style="overflow-x:auto;">
+  <table id="bomTable">
+    <thead><tr><th>圖</th><th>型號</th><th>用途</th><th class="num">單價</th><th class="num">數量</th><th class="num">小計</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <div class="total"><span>合計（含稅，未含運費／集運）</span><span class="y" id="totalY"></span></div>
+  <div class="warnnote hide" id="naWarn">⚠ 清單中有部分型號田中電機目前查無上架（已標示），合計金額不含這些項目，請點「搜尋」確認或改選其他顏色／通路。</div>
+  <div class="actions noprint">
+    <button id="copyBtn">複製文字清單</button>
+    <button onclick="window.print()">列印／存 PDF</button>
+  </div>
+  <ul class="remarks">
+    <li>價格為田中電機 2026/6 含稅參考價，實際以網站結帳為準；點「購買」直達商品頁。</li>
+    <li>開關皆為「3 路」型號：兩個開關控同一盞燈用 3 路；只有一個開關控一盞燈也是用 3 路。一鍵關（控總電源）也可用一切 3 路。</li>
+    <li>USB 充電插座：NK 為 R3707（Type-A 1 埠，另有 Type-C／雙埠款）；So-Style 為 WTL147740（Type-C+A 整組含面板）。下單前請先與設計師／水電確認規格。</li>
+    <li><b>線徑提醒：</b>日規插座端子僅適用 1.6／2.0mm 單芯線。專用迴路（5.5mm²／8mm² 絞線、220V）位置請勿購買本清單插座，需由水電師傅評估。</li>
+    <li>本工具以 110V 一般迴路常用款為主，220V／專用迴路請另洽水電並查官方型錄。</li>
+    <li>多種弱電（如網路+電視）要裝在「同一塊面板」時，框架與面板需手動調整（例如改用二口面板），本清單以每個項目獨立面板計算。</li>
+    <li>安裝前務必與合格水電師傅或設計師確認適用性。</li>
+  </ul>
+</div>
+
+<footer class="noprint">
+  資料來源：田中電機 tanakamusen.com（2026/6 價格）<br>
+  型號搭配參考：IG @homeow._ 日本面板常用型號懶人包（神保 NK 篇／So-Style 篇）<br>
+  本工具僅供參考，不代表任何採購建議；價格與庫存以商店即時資訊為準。
+</footer>
+</div>
+
+<script>
+// ===== 商品資料（田中電機 2026/6 抓取）=====
+// p:含稅價(JPY), id:田中電機商品pid。null = 田中電機暫無上架 → 提供搜尋連結
+const P = {
+ // ---- 神保 NK（色碼 PW純白 / SG灰 / SB黑）----
+ "NKW01008":{n:"一切開關本體(3路)", PW:[2310,"148364245"], SG:[2530,"190419655"], SB:null},
+ "NKW02008":{n:"二切開關本體(3路)", PW:[3300,"148625013"], SG:[3630,"148625188"], SB:[3630,"148625143"]},
+ "NKW03008":{n:"三切開關本體(3路)", PW:[4400,"148627676"], SG:[4730,"190397174"], SB:null},
+ "NKP-3UF":{n:"面板(一連)", PW:[407,"144262480"], SG:[495,"144262396"], SB:[495,"144262364"]},
+ "NKP-3UF-2":{n:"面板(二連)", PW:[803,"144262733"], SG:[990,"144262715"], SB:[990,"144262706"]},
+ "NKP-1UF":{n:"面板(一口)", PW:[407,"156225143"], SG:[495,"188366923"], SB:[495,"188367009"]},
+ "NKP-0UF":{n:"盲蓋(一連)", PW:[473,"146524150"], SG:[572,"146524086"], SB:[572,"128044337"]},
+ "NKP-0UF-2":{n:"盲蓋(二連)", PW:[946,"146524357"], SG:[1144,"146524297"], SB:[1144,"146524262"]},
+ "NKPN-1UP":{n:"踢腳面板(1口)", PW:[341,"152270278"], SG:[385,"190660702"], SB:[385,"152270531"]},
+ "NKPN-2UP":{n:"踢腳面板(2口)", PW:[539,"152270669"], SG:[660,"190705543"], SB:[660,"152270700"]},
+ "NKPN-3UP":{n:"踢腳面板(3口)", PW:[913,"152270845"], SG:[1034,"190705602"], SB:[1034,"152270898"]},
+ "JEC-BN-55G":{n:"接地雙插座本體", PW:[506,"144264630"], SG:[572,"144264595"], SB:[572,"144264586"]},
+ "JEC-BN-5GJ":{n:"踢腳扁型插座本體", PW:[429,"166511952"], SG:[484,"148124450"], SB:[484,"148124325"]},
+ "BS-1PH":{n:"踢腳鐵板(1口)", X:[165,"152271771"]},
+ "BS-2PH":{n:"踢腳鐵板(2口)", X:[165,"152271978"]},
+ "BS-3PH":{n:"踢腳鐵板(3口)", X:[209,"152272014"]},
+ "BS-C":{n:"安裝框架", X:[66,"167029889"]},
+ "JEC-BN-LW6L":{n:"網路孔 Cat6", PW:[2134,"144395320"], SG:[2783,"144395293"], SB:[2783,"144395236"]},
+ "JEC-BN-LW6AL":{n:"網路孔 Cat6A", PW:[3102,"173708089"], SG:[3564,"174839852"], SB:[3564,"174839786"]},
+ "JEC-BN-WUJ4":{n:"電話孔 6極4芯", PW:[572,"144394865"], SG:[649,"144394803"], SB:[649,"144394780"]},
+ "JEC-BN-LW6":{n:"電話孔 Cat6 8極8芯", PW:[2134,"167147084"], SG:[2783,"186726673"], SB:null},
+ "CSW-K7S":{n:"電視端子", PW:[1474,"144943557"], SG:[1716,"144943536"], SB:[1716,"144943513"]},
+ "R3707":{n:"USB充電插座 Type-A×1 ⚠規格請再確認", PW:[4026,"152272772"], SG:[4169,"152272970"], SB:[4169,"152273056"]},
+ // ---- Panasonic So-Style（色碼 W霧白 / H霧灰 / B霧黑）----
+ "WNS5002":{n:"方形開關本體(3路)", W:[1089,"147528506"], H:[1100,"174495188"], B:[1100,"147430131"]},
+ "WNS5052":{n:"方形開關本體(3路/指示燈)", W:[2145,"154696511"], H:[2772,"174495212"], B:[2398,"154696467"]},
+ "WNSS52929":{n:"橫長一切開關(3路/含框架)", W:[1892,"155083983"], H:[2409,"174495682"], B:[2574,"155083858"]},
+ "WNSS53959":{n:"橫長一切開關(3路/指示燈/含框架)", W:[3080,"155109766"], H:[3630,"174531792"], B:[3872,"155103228"]},
+ "WNSS52292":{n:"橫長二切開關(3路/含框架)", W:[2805,"155234834"], H:[3410,"174495478"], B:[3619,"155115533"]},
+ "WNSS53595":{n:"橫長二切開關(3路/指示燈/含框架)", W:[5214,"155235643"], H:[6193,"174532115"], B:[6050,"155235588"]},
+ "WNS3730":{n:"安裝框架", X:[259,"147431172"]},
+ "WNS6001":{n:"面板(1口)", W:[407,"147528267"], H:[517,"174485176"], B:[517,"147429533"]},
+ "WNS6002":{n:"面板(2口)", W:[407,"147528280"], H:[517,"174485200"], B:[517,"147429568"]},
+ "WNS6003":{n:"面板(一連)", W:[440,"147528288"], H:[484,"174485211"], B:[517,"147429574"]},
+ "WNS6004":{n:"面板(二連4口)", W:[803,"155259932"], H:[1034,"174490173"], B:[1034,"155259887"]},
+ "WNS6005":{n:"面板(二連5口)", W:[803,"155260959"], H:[1034,"174490245"], B:[1034,"155260487"]},
+ "WNS6006":{n:"面板(二連)", W:[803,"147528314"], H:[1034,"174490265"], B:[1034,"147429674"]},
+ "WNS6091":{n:"盲蓋(一連)", W:[484,"155263153"], H:[583,"174495135"], B:[583,"155263116"]},
+ "WNS6092":{n:"盲蓋(二連)", W:[946,"155263270"], H:[1166,"174495142"], B:[1166,"155263243"]},
+ "WTL13123M":{n:"接地雙插座(含框架)", W:[1089,"147528746",["WTL13123MW"]], H:[1287,"174484716",["WTL13123MH"]], B:[1496,"147448716",["WTL13123MB"]]},
+ "WN1101M":{n:"踢腳扁型插座本體", W:[924,"147528596",["WN1101MCW"]], H:[1045,"174495840",["WN1101MH"]], B:[1045,"147430883",["WN1101MB"]]},
+ "WCN3721":{n:"踢腳框架(1口)", X:[209,"134554077"]},
+ "WCN3722":{n:"踢腳框架(2口)", X:[253,"134554140"]},
+ "WCN3723":{n:"踢腳框架(3口)", X:[297,"134554169"]},
+ "WCF8501M":{n:"踢腳面板(1口)", W:null, H:null, B:null, kw:{W:"WCF8501",H:"WCF8501",B:"WCF8501"}, disp:{W:"WCF8501MWK",H:"WCF8501MHK",B:"WCF8501MBK"}},
+ "WCF8502M":{n:"踢腳面板(2口)", W:[550,"187560198",["WCF8502MWK"]], H:[660,"187922234",["WCF8502MHK"]], B:[660,"192143511",["WCF8502MBK"]]},
+ "WCF8503M":{n:"踢腳面板(3口)", W:[935,"187560253",["WCF8503MWK"]], H:[1056,"187922299",["WCF8503MHK"]], B:null, kw:{B:"WCF8503"}, disp:{B:"WCF8503MBK"}},
+ "NR3170M":{n:"網路孔 Cat6", W:[3003,"147528672",["NR3170MCW"]], H:[3344,"174531166",["NR3170MH"]], B:[3344,"147431553",["NR3170MB"]]},
+ "WNT15629M":{n:"電話孔 6極2芯", W:[1848,"164489934",["WNT15629MCW"]], H:[1958,"174531356",["WNT15629MH"]], B:[1958,"164489920",["WNT15629MB"]]},
+ "WCS3814M":{n:"電視端子", W:[2233,"155060447",["WCS3814MCW"]], H:[2354,"174531313",["WCS3814MH"]], B:[2354,"155060395",["WCS3814MB"]]},
+ "WTL147740M":{n:"USB充電插座 Type-C+A 整組含面板 ⚠規格請再確認", W:[9361,"159867703",["WTL147740MW"]], H:[9977,"174484929",["WTL147740MH"]], B:[9977,"159867640",["WTL147740MB"]]},
+};
+
+// ===== 商品圖（田中電機縮圖：{pid}_th.jpg / .png）=====
+const PNGPID=new Set(["190419655","190397174","188366923","190660702","190705543","190705602","186726673","187560198","187922234","187560253","187922299"]);
+const NOIMG=new Set(["188367009"]);
+function imgTag(pid,cls){
+  if(!pid||NOIMG.has(pid)) return `<span class="${cls}" style="display:inline-block;"></span>`;
+  const ext=PNGPID.has(pid)?"png":"jpg";
+  const alt=ext==="png"?"jpg":"png";
+  const base=`https://img17.shop-pro.jp/PA01266/551/product/${pid}_th.`;
+  return `<img class="${cls}" loading="lazy" src="${base}${ext}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${base}${alt}'}else{this.style.visibility='hidden'}" alt="">`;
+}
+// 取某需求的代表圖（第一個零件；目前色缺貨時退而用其他色的圖）
+function pidFor(key){
+  const arr=bomFor(key); if(!arr.length)return null;
+  const e=P[arr[0][0]]; if(!e)return null;
+  if(e.X)return e.X[1];
+  const order=[state.color,...(state.brand==="nk"?["PW","SG","SB"]:["W","H","B"])];
+  for(const c of order){const v=e[c]; if(v)return v[1];}
+  return null;
+}
+function refreshThumbs(){
+  document.querySelectorAll(".item").forEach(it=>{
+    const q=it.querySelector(".qty"); if(!q)return;
+    const old=it.querySelector("img.th,span.th"); if(old)old.remove();
+    it.insertAdjacentHTML("afterbegin",imgTag(pidFor(q.dataset.k),"th"));
+  });
+}
+
+// NK 型號的實際商品名（色碼接法不同）
+function skuName(base, color){
+  const e = P[base];
+  if(e.X) return base;
+  if(e.disp && e.disp[color]) return e.disp[color];
+  const v = e[color];
+  if(v && v[2]) return v[2][0];            // So-Style M色碼特殊型號
+  if(base.startsWith("NKW")) return base + color;          // NKW01008SG
+  if(/^(NKP|NKPN|JEC|CSW|R37)/.test(base)) return base + "(" + color + ")"; // NKP-3UF(SG)
+  return base + color;                                      // WNS5002H
+}
+
+const COLORS = {
+  nk:[{c:"PW",t:"純白 PW",hex:"#f4f2ec"},{c:"SG",t:"灰 SG",hex:"#6e6e6c"},{c:"SB",t:"柔黑 SB",hex:"#2a2a2a"}],
+  ss:[{c:"W",t:"霧白 W",hex:"#f5f4f0"},{c:"H",t:"霧灰 H",hex:"#4a4a4c"},{c:"B",t:"霧黑 B",hex:"#1d1d1f"}]
+};
+const KEYS=["sw1","sw2","sw3","sw4","sw5","sw6","out2","kick1","kick2","kick3","usb","lan6","lan6a","tel","tel8","tv","blind1","blind2"];
+const state={brand:"nk", color:"PW", qty:Object.fromEntries(KEYS.map(k=>[k,0]))};
+
+// ===== 換算邏輯：每個需求 → [型號, 每組數量] =====
+function bomFor(key){
+  const b=state.brand;
+  if(b==="nk"){
+    const M={
+      sw1:[["NKW01008",1],["NKP-3UF",1]],
+      sw2:[["NKW02008",1],["NKP-3UF",1]],
+      sw3:[["NKW03008",1],["NKP-3UF",1]],
+      sw4:[["NKW02008",2],["NKP-3UF-2",1]],
+      sw5:[["NKW02008",1],["NKW03008",1],["NKP-3UF-2",1]],
+      sw6:[["NKW03008",2],["NKP-3UF-2",1]],
+      out2:[["JEC-BN-55G",1],["NKP-3UF",1]],
+      kick1:[["JEC-BN-5GJ",1],["BS-1PH",1],["NKPN-1UP",1]],
+      kick2:[["JEC-BN-5GJ",2],["BS-2PH",1],["NKPN-2UP",1]],
+      kick3:[["JEC-BN-5GJ",3],["BS-3PH",1],["NKPN-3UP",1]],
+      usb:[["R3707",1],["BS-C",1],["NKP-1UF",1]],
+      lan6:[["JEC-BN-LW6L",1],["BS-C",1],["NKP-1UF",1]],
+      lan6a:[["JEC-BN-LW6AL",1],["BS-C",1],["NKP-1UF",1]],
+      tel:[["JEC-BN-WUJ4",1],["BS-C",1],["NKP-1UF",1]],
+      tel8:[["JEC-BN-LW6",1],["BS-C",1],["NKP-1UF",1]],
+      tv:[["CSW-K7S",1],["BS-C",1],["NKP-1UF",1]],
+      blind1:[["NKP-0UF",1]], blind2:[["NKP-0UF-2",1]],
+    };
+    return M[key]||[];
+  }
+  // So-Style
+  const wide = document.querySelector('input[name="ssStyle"]:checked').value==="wide";
+  const ind  = document.getElementById("ssInd").checked;
+  const SW = ind?"WNS5052":"WNS5002";          // 方形
+  const W1 = ind?"WNSS53959":"WNSS52929";      // 橫長一切
+  const W2 = ind?"WNSS53595":"WNSS52292";      // 橫長二切
+  const M={
+    sw1: wide?[[W1,1],["WNS6003",1]]:[[SW,1],["WNS3730",1],["WNS6001",1]],
+    sw2: wide?[[W2,1],["WNS6003",1]]:[[SW,2],["WNS3730",1],["WNS6002",1]],
+    sw3:[[SW,3],["WNS3730",1],["WNS6003",1]],
+    sw4: wide?[[W2,2],["WNS6006",1]]:[[SW,4],["WNS3730",2],["WNS6004",1]],
+    sw5: wide?[[W2,1],[SW,3],["WNS3730",1],["WNS6006",1]]:[[SW,5],["WNS3730",2],["WNS6005",1]],
+    sw6:[[SW,6],["WNS3730",2],["WNS6006",1]],
+    out2:[["WTL13123M",1],["WNS6003",1]],
+    kick1:[["WN1101M",1],["WCN3721",1],["WCF8501M",1]],
+    kick2:[["WN1101M",2],["WCN3722",1],["WCF8502M",1]],
+    kick3:[["WN1101M",3],["WCN3723",1],["WCF8503M",1]],
+    usb:[["WTL147740M",1]],
+    lan6:[["NR3170M",1],["WNS3730",1],["WNS6001",1]],
+    tel:[["WNT15629M",1],["WNS3730",1],["WNS6001",1]],
+    tv:[["WCS3814M",1],["WNS3730",1],["WNS6001",1]],
+    blind1:[["WNS6091",1]], blind2:[["WNS6092",1]],
+  };
+  return M[key]||[];
+}
+
+// ===== UI =====
+function renderColors(){
+  const box=document.getElementById("colorSw"); box.innerHTML="";
+  COLORS[state.brand].forEach(o=>{
+    const d=document.createElement("div");
+    d.className="sw"+(state.color===o.c?" on":"");
+    d.innerHTML=`<div class="chip" style="background:${o.hex}"></div><span>${o.t}</span>`;
+    d.onclick=()=>{state.color=o.c; renderColors();};
+    box.appendChild(d);
+  });
+  document.getElementById("ssOpts").classList.toggle("hide",state.brand!=="ss");
+  document.getElementById("nkOpts").classList.toggle("hide",state.brand!=="nk");
+  document.querySelectorAll("[data-nk-only]").forEach(el=>el.classList.toggle("hide",state.brand!=="nk"));
+  refreshThumbs();
+}
+document.querySelectorAll('input[name="ssStyle"]').forEach(r=>r.addEventListener("change",()=>refreshThumbs()));
+document.getElementById("ssInd").addEventListener("change",()=>refreshThumbs());
+document.getElementById("brandSeg").querySelectorAll("button").forEach(btn=>{
+  btn.onclick=()=>{
+    document.getElementById("brandSeg").querySelectorAll("button").forEach(b=>b.classList.remove("on"));
+    btn.classList.add("on");
+    state.brand=btn.dataset.b;
+    state.color=COLORS[state.brand][0].c;
+    renderColors();
+    document.getElementById("result").classList.add("hide");
+  };
+});
+document.querySelectorAll(".qty").forEach(q=>{
+  const k=q.dataset.k;
+  q.innerHTML=`<button type="button">−</button><input type="number" min="0" max="99" value="0"><button type="button">＋</button>`;
+  const [minus,plus]=q.querySelectorAll("button"); const inp=q.querySelector("input");
+  minus.onclick=()=>{inp.value=Math.max(0,(+inp.value||0)-1); state.qty[k]=+inp.value;};
+  plus.onclick=()=>{inp.value=Math.min(99,(+inp.value||0)+1); state.qty[k]=+inp.value;};
+  inp.oninput=()=>{state.qty[k]=Math.max(0,+inp.value||0);};
+});
+
+document.getElementById("genBtn").onclick=()=>{
+  const agg={}; // sku -> qty
+  let any=false;
+  KEYS.forEach(k=>{
+    const n=state.qty[k]||0; if(!n)return;
+    if(state.brand==="ss"){} // nk-only keys skipped below
+    if(state.brand==="ss"&&(k==="lan6a"||k==="tel8"))return;
+    any=true;
+    bomFor(k).forEach(([sku,per])=>{agg[sku]=(agg[sku]||0)+per*n;});
+  });
+  const res=document.getElementById("result");
+  if(!any){alert("請先填入至少一項數量");return;}
+  const tb=document.querySelector("#bomTable tbody"); tb.innerHTML="";
+  let total=0, hasNA=false;
+  Object.keys(agg).forEach(base=>{
+    const e=P[base];
+    const v=e.X?e.X:e[state.color];
+    const name=skuName(base,state.color);
+    const qty=agg[base];
+    const tr=document.createElement("tr");
+    if(v){
+      const sub=v[0]*qty; total+=sub;
+      tr.innerHTML=`<td>${imgTag(v[1],"bth")}</td><td class="sku">${name}</td><td class="use">${e.n}</td>
+        <td class="num">¥${v[0].toLocaleString()}</td><td class="num">${qty}</td>
+        <td class="num">¥${sub.toLocaleString()}</td>
+        <td><a class="buy" target="_blank" rel="noopener" href="https://www.tanakamusen.com/?pid=${v[1]}">購買</a></td>`;
+    }else{
+      hasNA=true;
+      const kw=(e.kw&&e.kw[state.color])||name;
+      tr.innerHTML=`<td></td><td class="sku">${name}</td><td class="use">${e.n}<br><span class="na">田中電機暫無此色上架</span></td>
+        <td class="num">—</td><td class="num">${qty}</td><td class="num">—</td>
+        <td><a class="srh" target="_blank" rel="noopener" href="https://www.tanakamusen.com/?mode=srh&sort=n&keyword=${encodeURIComponent(kw)}">搜尋</a></td>`;
+    }
+    tb.appendChild(tr);
+  });
+  document.getElementById("totalY").textContent="¥"+total.toLocaleString();
+  document.getElementById("naWarn").classList.toggle("hide",!hasNA);
+  document.getElementById("resBrand").textContent=
+    (state.brand==="nk"?"神保 NK":"So-Style")+"｜"+COLORS[state.brand].find(o=>o.c===state.color).t;
+  res.classList.remove("hide");
+  res.scrollIntoView({behavior:"smooth"});
+
+  // 文字清單
+  let txt="【日本面板採購清單】"+(state.brand==="nk"?"神保NK":"So-Style")+"・"+COLORS[state.brand].find(o=>o.c===state.color).t+"\n";
+  Object.keys(agg).forEach(base=>{
+    const e=P[base]; const v=e.X?e.X:e[state.color]; const name=skuName(base,state.color);
+    txt+=`${name} ×${agg[base]}（${e.n}）`+(v?`¥${v[0].toLocaleString()}/個 https://www.tanakamusen.com/?pid=${v[1]}`:"※田中電機暫無此色")+"\n";
+  });
+  txt+=`合計約 ¥${total.toLocaleString()}（含稅，未含運）\n⚡注意：日規插座僅適用110V一般迴路（1.6/2.0mm單芯線）；專用迴路（5.5mm²絞線/220V）位置不適用，請與水電確認。\n價格為2026/6參考價，下單前請再次確認。`;
+  window.__copyText=txt;
+};
+
+document.getElementById("copyBtn").onclick=async()=>{
+  try{await navigator.clipboard.writeText(window.__copyText||"");
+    document.getElementById("copyBtn").textContent="已複製 ✓";
+    setTimeout(()=>document.getElementById("copyBtn").textContent="複製文字清單",1500);
+  }catch(e){alert("複製失敗，請手動選取");}
+};
+
+renderColors();
+</script>
+</body>
+</html>
