@@ -157,7 +157,7 @@
     <button onclick="window.print()">列印／存 PDF</button>
   </div>
   <ul class="remarks">
-    <li>價格為田中電機 2026/6 含稅參考價，實際以網站結帳為準；點「購買」直達商品頁。</li>
+    <li>價格為田中電機含稅參考價（每週一自動同步；無法讀取時顯示 2026/6 版本），實際以網站結帳為準；點「購買」直達商品頁。</li>
     <li>開關皆為「3 路」型號：兩個開關控同一盞燈用 3 路；只有一個開關控一盞燈也是用 3 路。一鍵關（控總電源）也可用一切 3 路。</li>
     <li>USB 充電插座：NK 為 R3707（Type-A 1 埠，另有 Type-C／雙埠款）；So-Style 為 WTL147740（Type-C+A 整組含面板）。下單前請先與設計師／水電確認規格。</li>
     <li><b>線徑提醒：</b>本清單為日規（日本進口）110V 一般迴路插座，端子僅能接 1.6／2.0mm 單芯線，無法用於專用迴路。專迴（冷氣、電熱水器、烤箱、廚房高功率）請改用台規國際牌星光系列等專迴款（有 5.5mm² 絞線專用型號與 220V 款），或保留台規插座、由水電評估盒內配置。</li>
@@ -167,7 +167,7 @@
 </div>
 
 <footer class="noprint">
-  資料來源：田中電機 tanakamusen.com（2026/6 價格）<br>
+  資料來源：田中電機 tanakamusen.com <span id="priceUpd">（2026/6 價格）</span><br>
   本工具僅供參考，不代表任何採購建議；價格與庫存以商店即時資訊為準。
 </footer>
 </div>
@@ -411,7 +411,7 @@ document.getElementById("genBtn").onclick=()=>{
     const e=P[base]; const v=e.X?e.X:e[state.color]; const name=skuName(base,state.color);
     txt+=`${name} ×${agg[base]}（${e.n}）`+(v?`¥${v[0].toLocaleString()}/個 https://www.tanakamusen.com/?pid=${v[1]}`:"※田中電機暫無此色")+"\n";
   });
-  txt+=`合計約 ¥${total.toLocaleString()}（含稅，未含運）\n⚡注意：本清單為日規110V一般迴路插座（端子僅接1.6/2.0mm單芯線），無法用於專用迴路；專迴請改用台規國際牌星光系列等專迴款，或由水電評估盒內配置。\n價格為2026/6參考價，下單前請再次確認。`;
+  txt+=`合計約 ¥${total.toLocaleString()}（含稅，未含運）\n⚡注意：本清單為日規110V一般迴路插座（端子僅接1.6/2.0mm單芯線），無法用於專用迴路；專迴請改用台規國際牌星光系列等專迴款，或由水電評估盒內配置。\n價格為${window.__priceDate?window.__priceDate+" 同步之":"2026/6 "}參考價，下單前請再次確認。`;
   window.__copyText=txt;
 };
 
@@ -423,6 +423,26 @@ document.getElementById("copyBtn").onclick=async()=>{
 };
 
 renderColors();
+
+// ===== 每週自動同步價格（prices.json 由 GitHub Actions 產生；讀不到就用內建價格）=====
+(async()=>{
+  try{
+    const r=await fetch('prices.json?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)return;
+    const d=await r.json();
+    if(!d||!d.prices)return;
+    for(const base in P){
+      const e=P[base];
+      for(const c of ['X','PW','SG','SB','W','H','B']){
+        const v=e[c];
+        if(v&&v[1]&&d.prices[v[1]])v[0]=d.prices[v[1]];
+      }
+    }
+    window.__priceDate=d.updated;
+    const el=document.getElementById('priceUpd');
+    if(el)el.textContent=`（價格同步：${d.updated}，每週一自動更新）`;
+  }catch(e){/* 離線或本機開啟時沿用內建價格 */}
+})();
 </script>
 </body>
 </html>
